@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>File Transfer</title>
+    <link rel="stylesheet" href="style.css">
+
+  </head>
+
+  <body>
+
+    <header id="cabecalho">
+      <h1>File Transfer Online</h1>
+    </header>
+
+    <main>
+    <section id="send">
+
+      <h2>Send</h2>
+      <br>
+      <form>
+        <label for="myfile">Selecione um ou mais arquivos:</label>
+        <input type="file" id="myfile" name="myfile" multiple><br><br>
+
+        <label for="chaveS">Selecione uma cahve identificadora:</label>
+        <input type="text" id="chaveS" name="chaveS"><br><br><br>
+      </form>
+  
+      <table id="fileTable">
+
+        <thead>
+          <tr>
+            <th>Nome do Arquivo</th>
+            <th>Tamanho</th>
+            <th>Excluir</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <h2>Arquivos</h2>
+        </tbody>
+
+      </table>
+
+      <form>
+        <br>
+        <input type="submit" value="Enviar">
+      </form>
+
+    </section>
+
+    <section id="receive">
+
+      <h2>Receive</h2>
+
+      <form>
+        <br>
+        <label for="chaveS">Insira a chave primária do Sender:</label>
+        <input type="text" id="chaveR" name="chaveR">
+      </form>
+
+    </section>
+    </main>
+
+  
+  <footer id="rodape">
+  
+    <p>&copy; 2023 File Transfer Online.</p> 
+    <p>Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="tabela.js"></script>
+  </body>
+
+</html>

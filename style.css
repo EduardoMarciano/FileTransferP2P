@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@100&display=swap');
+
+* {
+  margin: 0;
+
+}
+
+body{
+  background-image: url(teste.jpeg);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+h1{
+  font-family: 'Roboto Slab', serif;
+  color: azure;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+h2{
+  font-family: 'Roboto Slab', serif;
+  color: azure;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: chocolate;
+
+
+}
+
+
+table {
+  width: 100%;font-family: 'Barlow', sans-serif;
+  border-collapse: collapse;
+
+}
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+#cabecalho {
+  font-family: 'Roboto Slab', serif;
+  color: azure;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: rgb(63, 90, 89);
+}
+
+main {
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  margin-top: 1px;
+  padding-top: 40px;
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+#rodape {
+  background-color: rgb(63, 90, 89);
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  color: #ddd;
+  border-top: 1px solid black;
+  margin-top: 35px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
