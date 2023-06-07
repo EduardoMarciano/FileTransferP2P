@@ -1,23 +1,4 @@
-function DefineTamanho(tamanho) {
-  var kilobyte = 1024;
-  var megabyte = 1024**2;
-  var gigabyte = 1024**3;
-
-  if (tamanho < kilobyte) {
-    return tamanho + ' B';
-  }
-  else if (tamanho < megabyte) {
-    return (tamanho / kilobyte).toFixed(2) + ' KB';
-  }
-  else if (tamanho< gigabyte){
-    return (tamanho / megabyte).toFixed(2) + ' MB';
-  }
-  else{
-    return (tamanho / gigabyte).toFixed(2) + ' GB';
-  }
-}
-
-document.getElementById('myfile').addEventListener('change', function(evento) {
+function defineFiles(evento){
 
   var files = evento.target.files;
   var tabela = document.querySelector('#fileTable tbody');
@@ -44,6 +25,7 @@ document.getElementById('myfile').addEventListener('change', function(evento) {
       tabela.removeChild(evento.target.parentNode.parentNode);
 
     });
+    
     action.appendChild(excluir);
 
     row.appendChild(nome);
@@ -53,8 +35,27 @@ document.getElementById('myfile').addEventListener('change', function(evento) {
     tabela.appendChild(row);
   }
 
-});
+}
 
+
+function DefineTamanho(tamanho) {
+  var kilobyte = 1024;
+  var megabyte = 1024**2;
+  var gigabyte = 1024**3;
+
+  if (tamanho < kilobyte) {
+    return tamanho + ' B';
+  }
+  else if (tamanho < megabyte) {
+    return (tamanho / kilobyte).toFixed(2) + ' KB';
+  }
+  else if (tamanho< gigabyte){
+    return (tamanho / megabyte).toFixed(2) + ' MB';
+  }
+  else{
+    return (tamanho / gigabyte).toFixed(2) + ' GB';
+  }
+}
 function sendArchives() {
   var table = document.getElementById("tbody");
   var lines = table.getElementsByTagName("tr").length;
@@ -80,28 +81,27 @@ function downloadArchives() {
   for (var i = 0; i < lines.length; i++) {
     isChecked.push(lines[i].checked);
   }
-  
+
   if (!isChecked.includes(true)) {
-    alert("Selecione um arquivo para ser baixado.")
+    alert("Selecione um arquivo para ser baixado.");
   } else {
+    var selectedLines = [];
+
     for (var i = 0; i < lines.length; i++) {
       if (lines[i].checked) {
-        //download o value
-        //fazer mais um for, pois a variável lines só tem os checkboxes
+        selectedLines.push(lines[i]);
       }
-
-      document.getElementById("chaveR").value = '';
-      var table = document.querySelector('#fileTableReceiver tbody');
-      lines = table.getElementsByTagName('tr');
-
-      for (var i = 0; i < lines.length; i++) {
-        table.removeChild(lines[i]);
-      }
-          
     }
+
+    for (var i = 0; i < selectedLines.length; i++) {
+      var row = selectedLines[i].parentNode.parentNode; // linha herdada
+      table.removeChild(row); // Remove a linha da tabela
+    }
+
+    document.getElementById("chaveR").value = '';
   }
-  
 }
+
 
 function pesquisar() {
   var codigoSender = document.getElementById("chaveR").value;
@@ -111,7 +111,8 @@ function pesquisar() {
   } else {
     //Vai encontrar o sender e pegar os documentos dele
     //Para testar o visual, vou usar um file qualquer
-    var files = [["teste", "15KB"]];
+    var teste = parseInt(Math.random() * (100), 10);
+    var files = [[teste, "15KB"]];
   
     var tabela = document.querySelector('#fileTableReceiver tbody');
     
@@ -120,10 +121,23 @@ function pesquisar() {
       var size = files[i][1];
 
       var row          = document.createElement('tr');
+      var selecionar   = document.createElement('input');
+      var action0       = document.createElement('td');
       var nome         = document.createElement('td');
       var tamanho      = document.createElement('td');
-      var action       = document.createElement('td');
-      var selecionar   = document.createElement('input');
+      var action1       = document.createElement('td');
+      var excluir      = document.createElement('button');
+
+      excluir.textContent = 'Excluir';
+      excluir.setAttribute('data-index', i);
+      excluir.style.cursor = 'pointer'; 
+      excluir.addEventListener('click', function(evento) {
+      
+        tabela.removeChild(evento.target.parentNode.parentNode);
+
+      });
+    
+      action1.appendChild(excluir);
     
       nome.textContent = file;
       tamanho.textContent = size;
@@ -132,11 +146,13 @@ function pesquisar() {
       selecionar.setAttribute('class', "checkbox");
       selecionar.style.cursor = 'pointer';      
 
-      action.append(selecionar);
+      action0.append(selecionar);
+      row.appendChild(action0);
 
       row.appendChild(nome);
       row.appendChild(tamanho);
-      row.appendChild(action);
+      row.appendChild(action1);
+
     
       tabela.appendChild(row);
     }
