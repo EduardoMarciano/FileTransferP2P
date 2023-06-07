@@ -88,14 +88,16 @@ main {
   display: flex;
   flex-direction: row;
   width: 100%;
+  justify-content: space-between;
+  
 }
 
 #send {
-  width: 50%
+  width: 45%;
 }
 
 #receive {
-  width: 50%;
+  width: 45%;
 }
 
 #formSend {
