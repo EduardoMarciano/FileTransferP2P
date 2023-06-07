@@ -81,28 +81,27 @@ function downloadArchives() {
   for (var i = 0; i < lines.length; i++) {
     isChecked.push(lines[i].checked);
   }
-  
+
   if (!isChecked.includes(true)) {
-    alert("Selecione um arquivo para ser baixado.")
+    alert("Selecione um arquivo para ser baixado.");
   } else {
+    var selectedLines = [];
+
     for (var i = 0; i < lines.length; i++) {
       if (lines[i].checked) {
-        //download o value
-        //fazer mais um for, pois a variável lines só tem os checkboxes
+        selectedLines.push(lines[i]);
       }
-
-      document.getElementById("chaveR").value = '';
-      var table = document.querySelector('#fileTableReceiver tbody');
-      lines = table.getElementsByTagName('tr');
-
-      for (var i = 0; i < lines.length; i++) {
-        table.removeChild(lines[i]);
-      }
-          
     }
+
+    for (var i = 0; i < selectedLines.length; i++) {
+      var row = selectedLines[i].parentNode.parentNode; // linha herdada
+      table.removeChild(row); // Remove a linha da tabela
+    }
+
+    document.getElementById("chaveR").value = '';
   }
-  
 }
+
 
 function pesquisar() {
   var codigoSender = document.getElementById("chaveR").value;
@@ -112,7 +111,8 @@ function pesquisar() {
   } else {
     //Vai encontrar o sender e pegar os documentos dele
     //Para testar o visual, vou usar um file qualquer
-    var files = [["teste", "15KB"]];
+    var teste = parseInt(Math.random() * (100), 10);
+    var files = [[teste, "15KB"]];
   
     var tabela = document.querySelector('#fileTableReceiver tbody');
     
