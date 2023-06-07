@@ -21,7 +21,7 @@
           <form id="formSend">
             <div id="chooseFile">
               <label for="myfile" style="font-weight:bold;">Selecione um ou mais arquivos:</label>
-              <input type="file" id="myfile" name="myfile" multiple>
+              <input type="file" id="myfile" name="myfile" multiple onchange="defineFiles(event)">
             </div>
           
           <div id="identifierKey">
