@@ -121,10 +121,23 @@ function pesquisar() {
       var size = files[i][1];
 
       var row          = document.createElement('tr');
+      var selecionar   = document.createElement('input');
+      var action0       = document.createElement('td');
       var nome         = document.createElement('td');
       var tamanho      = document.createElement('td');
-      var action       = document.createElement('td');
-      var selecionar   = document.createElement('input');
+      var action1       = document.createElement('td');
+      var excluir      = document.createElement('button');
+
+      excluir.textContent = 'Excluir';
+      excluir.setAttribute('data-index', i);
+      excluir.style.cursor = 'pointer'; 
+      excluir.addEventListener('click', function(evento) {
+      
+        tabela.removeChild(evento.target.parentNode.parentNode);
+
+      });
+    
+      action1.appendChild(excluir);
     
       nome.textContent = file;
       tamanho.textContent = size;
@@ -133,11 +146,13 @@ function pesquisar() {
       selecionar.setAttribute('class', "checkbox");
       selecionar.style.cursor = 'pointer';      
 
-      action.append(selecionar);
+      action0.append(selecionar);
+      row.appendChild(action0);
 
       row.appendChild(nome);
       row.appendChild(tamanho);
-      row.appendChild(action);
+      row.appendChild(action1);
+
     
       tabela.appendChild(row);
     }
