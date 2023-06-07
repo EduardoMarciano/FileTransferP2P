@@ -31,8 +31,6 @@ h2{
   padding-top: 15px;
   padding-bottom: 15px;
   background-color: chocolate;
-
-
 }
 
 
@@ -65,7 +63,7 @@ main {
   padding-top: 40px;
   margin: 10px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
 }
 
@@ -85,3 +83,70 @@ main {
   flex-direction: column;
   align-items: center;
 }
+
+#entradas {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+#send {
+  width: 50%
+}
+
+#receive {
+  width: 50%;
+}
+
+#formSend {
+  display: flex;
+  flex-direction: column;
+  margin-left: 2%;
+  max-width: fit-content;
+}
+
+#formReceive {
+  display: flex;
+  flex-direction: row;
+  margin-top: 3%;
+  margin-left: 10%;
+}
+
+#pesquisarSender {
+  width: fit-content;
+  margin-left: 1%;
+  max-height: 0.65cm;
+}
+
+#chooseFile {
+  margin-bottom: 3%;
+  margin-top: 3%;
+}
+#identifierKey {
+  margin-bottom: 3%;
+}
+
+#myfile:hover {
+  cursor:pointer;
+}
+
+#chaveR {
+  margin-left: 1%;
+  max-height: 0.5cm;
+}
+
+#tables {
+  display: flex;
+  flex-direction: row;
+  margin-top: 5%;
+  justify-content: space-between;
+}
+
+#tableSender {
+  width: 45%;
+}
+
+#tableReceiver {
+  width: 45%;
+}
+
