@@ -3,7 +3,7 @@ import random
 import threading
 
 PORT = 5300
-HOST = '192.168.0.5'
+HOST = '177.235.144.169'
 
 while True:
         escolha = input()
@@ -12,10 +12,10 @@ while True:
         client.connect((HOST, PORT))
 
         if escolha == "Sender":
-                client.send("Sender,TARC4, 288.8.8.8".encode('utf-8'))
+                client.send("Sender,VAS, 999.999.99.".encode('utf-8'))
         
         elif escolha == "Reciver":
-                client.send("Reciver,TARwC4, none".encode('utf-8'))
+                client.send("Reciver,VAS, none".encode('utf-8'))
 
         else:
                 print("Entrada Errada")
