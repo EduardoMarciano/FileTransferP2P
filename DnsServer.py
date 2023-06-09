@@ -118,7 +118,7 @@ cursor.fetchall()
         
 # Montnado o Servidor DNS
 PORT = 5300
-HOST = '127.0.0.1'
+HOST = '192.168.0.5'
 
 DNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
