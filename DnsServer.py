@@ -4,9 +4,9 @@ import mysql.connector
 
 #Procura tentativas de coneção
     # Sender  manda Sender, Chave, IP
-    # Reciver manda Reciver, chave, None
+    # Reciver manda Reciver, chave, IP
 
-def handle(client, username, Server, BD):
+def handle(client, BD, cursor):
     
     while True:
         message = client.recv(1024).decode('utf-8')
@@ -16,7 +16,7 @@ def handle(client, username, Server, BD):
         chave = message[1]
         ip    = message[2]
 
-        if message[0] == "Sender":
+        if tipo == "Sender":
             # salva o ip e sua chave primária
             query = "INSERT INTO Sender (chave, ip) VALUES (%s, %s)"
             values = (chave, ip)
@@ -24,34 +24,43 @@ def handle(client, username, Server, BD):
             cursor.execute(query, values)
             BD.commit()
             
-        elif message[0] == "Reciver":
+        elif tipo == "Reciver":
             try:
-                # Testa para ver se o sender existe
-                cursor.execute("SELECT ip FROM peers WHERE chave = %s", (chave,))
+                # Resgata o IP do sender
+                cursor.execute("SELECT ip FROM Sender WHERE chave = %s", (chave,))
+                result = cursor.fetchone()
+
+                sender_ip = result[0]
 
                 try:
                     #Testa para ver se ele está online
-                    socket.create_connection((ip, 5301))
+                    socket.create_connection((sender_ip, 5301))
                     
                     #Devolve o IP
-                    response = f"IP do sender: {ip}"
+                    response = f"IP do sender: {sender_ip}"
                     client.send(response.encode('utf-8'))
 
-                except:
-                    print("Sender não online será removido")
-                    query = f"DELETE FROM Sender WHERE chave = {chave}"
+                except  ConnectionError:
+                    print("Sender offline será removido")
 
-                    cursor.execute(query)
+                    query = "DELETE FROM Sender WHERE chave = %s"
+                    cursor.execute(query, (chave,))
+
                     BD.commit()
                     quit()
             
             except:
                 print("Sender não exite")
                 quit()
+        else:
+            print("Recebemos lixo")
+            continue
+
+def tratamento_cliente(client):
+    handle(client, BD, cursor)
+    client.close()
 
 
-        
-    
 #Conecta ao banco de dados
 BD = mysql.connector.connect(
     host="localhost",
@@ -70,10 +79,13 @@ if BD.is_connected():
         cursor.execute("SHOW TABLES LIKE %s", ("Sender",))
         nome_tabela = cursor.fetchone()
         print("Conexão bem sucedida com o Banco de Dados do Sistema.")
-        print(f'Nome da Tabela do sender: {nome_tabela}')
+
+        if nome_tabela:
+            print("Tabela 'Sender' existe no banco de dados.")
+        else:
+            print("Tabela 'Sender' não existe no banco de dados.")
     
 else:
-
         print("Conexão mal sucedida, verifique se exite a database e o user")
         quit()
         
@@ -88,4 +100,15 @@ DNS.listen()
 
 print(f"Server escutando na porta: {PORT}")
 
+while True:
+        client, address = DNS.accept()
+
+        print(f"Nova conexão estabelecida: {address[0]}:{address[1]}")
+
+        # Inicia uma nova thread para lidar com o cliente
+        thread = threading.Thread(target=tratamento_cliente, args=(client,))
+        thread.start()
+
+cursor.close()
+BD.close()
 DNS.close()
