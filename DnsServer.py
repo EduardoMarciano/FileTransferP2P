@@ -24,7 +24,7 @@ def handle(client, BD, cursor):
                 values = (chave, ip)
 
                 cursor.execute(query, values)
-                cursor.fetchone()
+                cursor.fetchall()
                 BD.commit()
                 
             elif tipo == "Reciver":
@@ -32,6 +32,7 @@ def handle(client, BD, cursor):
                     # Resgata o IP do sender
                     cursor.execute("SELECT ip FROM Sender WHERE chave = %s", (chave,))
                     result = cursor.fetchone()
+                    cursor.fetchall()
 
                     sender_ip = result[0]
 
@@ -48,6 +49,7 @@ def handle(client, BD, cursor):
 
                         query = "DELETE FROM Sender WHERE chave = %s"
                         cursor.execute(query, (chave,))
+                        cursor.fetchall()
 
                         BD.commit()
                         quit()
@@ -96,6 +98,8 @@ if BD.is_connected():
 else:
         print("Conexão mal sucedida, verifique se exite a database e o user")
         quit()
+
+cursor.fetchall()
         
 # Montnado o Servidor DNS
 PORT = 5300
