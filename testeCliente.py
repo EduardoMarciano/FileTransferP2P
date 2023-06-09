@@ -2,24 +2,24 @@ import socket
 import random
 import threading
 
-def defineCliente():
-    
-    PORT = 5300
-    HOST = '127.0.0.1'
+PORT = 5300
+HOST = '127.0.0.1'
 
-    numero_aleatorio = random.randint(0, 100)
+while True:
+        escolha = input()
 
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((HOST, PORT))
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect((HOST, PORT))
 
-    print(numero_aleatorio)
-    if numero_aleatorio > 50:
-            client.send("Sender,VASCO,127.0.0.1".encode('utf-8'))
+        if escolha == "Sender":
+                client.send("Sender,VARC4,288.8.8.8".encode('utf-8'))
+        
+        elif escolha == "Reciver":
+                client.send("Reciver,VARC4,127.0.0.1".encode('utf-8'))
 
-    elif numero_aleatorio <= 50:
-        client.send("Reciver,VASCO,127.0.0.1".encode('utf-8'))
+        else:
+                print("Entrada Errada")
+                continue
+
         message = client.recv(1024).decode('utf-8')
         print(message)
-
-defineCliente()
-

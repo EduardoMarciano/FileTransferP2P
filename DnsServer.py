@@ -13,19 +13,34 @@ def handle(client, BD, cursor):
         print(message)
         message = message.split(",")
         print(message)
+
         if len(message)==3:
             tipo  = message[0]
             chave = message[1]
             ip    = message[2]
 
             if tipo == "Sender":
-                # salva o ip e sua chave primária
-                query = "INSERT INTO Sender (chave, ip) VALUES (%s, %s)"
-                values = (chave, ip)
-
-                cursor.execute(query, values)
+                
+                #Testa para ver se a chave primária já existe
+                cursor.execute("SELECT * FROM Sender WHERE chave = %s", (chave,))
+                result = cursor.fetchone()
                 cursor.fetchall()
-                BD.commit()
+
+                if result is None:
+                    # salva o ip e sua chave primária
+                    query = "INSERT INTO Sender (chave, ip) VALUES (%s, %s)"
+                    values = (chave, ip)
+
+                    cursor.execute(query, values)
+                    cursor.fetchall()
+                    BD.commit()
+
+                    client.send("Chave cadastrada.".encode('utf-8'))
+
+                else:
+                    client.send("Chave já ocupada.".encode('utf-8'))
+                    quit()
+
                 
             elif tipo == "Reciver":
                 try:
@@ -38,7 +53,7 @@ def handle(client, BD, cursor):
 
                     try:
                         #Testa para ver se ele está online
-                        socket.create_connection((sender_ip, 5300))
+                        #socket.create_connection((sender_ip, 5300))
                         
                         #Devolve o IP
                         response = f"IP do sender: {sender_ip}"
@@ -80,7 +95,7 @@ BD = mysql.connector.connect(
 )
 
 cursor = BD.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS Sender (id INT AUTO_INCREMENT PRIMARY KEY, chave VARCHAR(255), ip VARCHAR(255))")
+cursor.execute("CREATE TABLE IF NOT EXISTS Sender (chave VARCHAR(255), ip VARCHAR(255), PRIMARY KEY(chave))")
 cursor.fetchone()
 # Testa se a conexão foi bem sucedida.
 
