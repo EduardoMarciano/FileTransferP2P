@@ -4,7 +4,7 @@ import datetime
 
 class Peer:
     def __init__(self, host, port, chave):
-        self.host = host
+        self.host = "localhost"
         self.port = port
         self.chave = chave
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,7 +16,7 @@ class Peer:
 
         senderDNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         senderDNS.connect((HOST, PORT))
-        senderDNS.send((f"Sender,{self.chave},{self.host}").encode('utf-8'))
+        senderDNS.send((f"Sender,{self.chave}, 177.235.144.169").encode('utf-8'))
 
         # Inicia o servidor socket e aguarda a conexão
         self.socket.bind((self.host, self.port))
@@ -63,8 +63,10 @@ class Peer:
         # Conecta-se ao servidor DNS e recupera o IP
         PORT = 5300
         HOST = '177.235.144.169'
+
         reciverDNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         reciverDNS.connect((HOST, PORT))
+        
         reciverDNS.send((f"Reciver,{chave}, none").encode('utf-8'))
 
         message = reciverDNS.recv(1024).decode('utf-8')
