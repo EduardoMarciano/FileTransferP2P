@@ -1,25 +1,36 @@
 import socket
 import os
 import datetime
+import requests
+
+
+def get_public_ip():
+    response = requests.get('https://api.ipify.org/?format=json')
+    ip = response.json()['ip']
+    return ip
 
 class Peer:
-    def __init__(self, host, port, chave):
-        self.host = "localhost"
+    def __init__(self, port, chave):
         self.port = port
         self.chave = chave
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection = None
+        self.host = socket.gethostbyname(socket.gethostname())
 
     def send(self):
+        # Inicia o servidor socket e aguarda a conexão
+        self.socket.bind((self.host, self.port))
+        
+        ip_sender = get_public_ip()
+        print(f"Host {self.host}, IP {ip_sender}")
+
+        #Conecta-se ao servidor DNS e recupera o IP
         PORT = 5300
         HOST = '177.235.144.169'
 
         senderDNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         senderDNS.connect((HOST, PORT))
-        senderDNS.send((f"Sender,{self.chave}, 177.235.144.169").encode('utf-8'))
-
-        # Inicia o servidor socket e aguarda a conexão
-        self.socket.bind((self.host, self.port))
+        senderDNS.send((f"Sender,{self.chave},{ip_sender}").encode('utf-8'))
 
         while True:
             self.socket.listen() 
@@ -74,6 +85,7 @@ class Peer:
         message = message[1][1:]
 
         # Conecta-se ao par remoto e recebe a lista de informações de arquivos
+        print(message)
         self.socket.connect((message, self.port))
         print("Conectado!\n")
 

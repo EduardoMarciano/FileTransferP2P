@@ -15,7 +15,7 @@ while True:
                 client.send("Sender,VAS, 999.999.99.".encode('utf-8'))
         
         elif escolha == "Reciver":
-                client.send("Reciver,VAS, none".encode('utf-8'))
+                client.send("Reciver,TUS, none".encode('utf-8'))
 
         else:
                 print("Entrada Errada")

@@ -10,7 +10,6 @@ def handle(client, BD, cursor):
     
     while True:
         message = client.recv(1024).decode('utf-8')
-        print(message)
         message = message.split(",")
         print(message)
 
@@ -36,9 +35,11 @@ def handle(client, BD, cursor):
                     BD.commit()
 
                     client.send("Chave cadastrada.".encode('utf-8'))
+                    print("Chave cadastrada.")
 
                 else:
                     client.send("Chave já ocupada.".encode('utf-8'))
+                    print("Chave já ocupada.")
                     quit()
 
                 
