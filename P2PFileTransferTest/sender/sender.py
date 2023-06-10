@@ -2,5 +2,5 @@ import socket
 import peer
 import os
 
-sender = peer.Peer(9999, "SSS")
+sender = peer.Peer("localhost", 9999,"TU")
 sender.send()
