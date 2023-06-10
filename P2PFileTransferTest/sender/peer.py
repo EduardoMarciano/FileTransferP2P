@@ -92,12 +92,11 @@ class Peer:
                 break
             else:
                 namefile = namefile+","+entrada
-
-
+                 
         # Envia o nome do arquivo ao par remoto e recebe o arquivo em blocos
         self.socket.send(namefile.encode())
 
-        lista_nameF = namefile.split(",")
+        lista_nameF = namefile[1:].split(",")
 
         for x in lista_nameF:
             with open(x, "wb") as file:
