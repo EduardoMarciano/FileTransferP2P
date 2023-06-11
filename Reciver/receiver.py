@@ -2,5 +2,5 @@ import peerR
 import socket
 import os
 
-receiver = peerR.PeerR(5353)
-receiver.request("11112")
+receiver = peerR.PeerR(5600)
+receiver.request("TTT")

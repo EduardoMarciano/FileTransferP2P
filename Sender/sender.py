@@ -2,5 +2,5 @@ import socket
 import peerS
 import os
 
-sender = peerS.PeerS(5353,"11112")
+sender = peerS.PeerS(5600,"TTT")
 sender.send()

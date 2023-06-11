@@ -27,17 +27,18 @@ class PeerS:
         PORT = 5300
         HOST = '177.235.144.169'
         # Inicia o servidor socket e aguarda a conexão
-        self.socket.bind((self.host, self.port))
-        self.socket.listen()
+        ip = get_public_ip()
 
         senderDNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         senderDNS.connect((HOST, PORT))
-        ip = get_public_ip()
         senderDNS.send((f"Sender,{self.chave},{ip}").encode('utf-8'))
         senderDNS.close()
+
         # Inicia o servidor socket e aguarda a conexão
+        self.socket.bind((self.host, self.port))
 
         while True:
+            self.socket.listen()
             connection, address = self.socket.accept()
             if connection:
                 diretorio = os.getcwd()
