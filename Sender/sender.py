@@ -1,6 +1,6 @@
 import socket
-import peer
+import peerS
 import os
 
-sender = peer.Peer("localhost", 9999,"TREM")
+sender = peerS.PeerS("localhost", 9999,"TREM")
 sender.send()
