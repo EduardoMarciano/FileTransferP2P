@@ -58,11 +58,9 @@ class PeerR:
                 while True:
                     data = sckt.recv(1024)
                     print(data)
-                    if data == "":
-                        continue
 
                     file.write(data)
                     if not data:
-                        print(f"Enviado:{x}")
+                        print(f"Recebido: {x}")
                         break
                         

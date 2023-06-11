@@ -22,6 +22,7 @@ class PeerS:
 
         # Inicia o servidor socket e aguarda a conexão
         self.socket.bind((self.host, self.port))
+
         while True:
             self.socket.listen() 
             connection, address = self.socket.accept()
@@ -49,17 +50,16 @@ class PeerS:
                 print(namefiles)
                 
                 for namefile in namefiles:
-                        with open(namefile, "rb") as file:
-                            while True:
-                                data = file.read(1024)
-                                print(data)
-                                if data == "":
-                                    continue
-                                
-                                if not data:
-                                    break
-                                connection.sendall(data)
+                    with open(namefile, "rb") as file:
+                        while True:
+                            data = file.read(1024)
+                            
+                            if not data:
+                                break
 
+                            connection.sendall(data)
+
+                    print(f"Enviado: {namefile}")
                 connection.close()
             else:
                 continue
