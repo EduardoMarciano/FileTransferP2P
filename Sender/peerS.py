@@ -2,29 +2,42 @@ import socket
 import os
 import datetime
 import time
+import threading
+
+import requests
+
+def get_public_ip():
+    response = requests.get('https://api.ipify.org?format=json')
+    data = response.json()
+    ip = data['ip']
+    
+    return ip
+
 
 class PeerS:
-    def __init__(self, host, port, chave):
-        self.host = "localhost"
+    def __init__(self, port, chave):
         self.port = port
         self.chave = chave
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection = None
-    
+        self.host = socket.gethostbyname(socket.gethostname())
+        print(self.host)
     
     def send(self):
         PORT = 5300
         HOST = '177.235.144.169'
+        # Inicia o servidor socket e aguarda a conexão
+        self.socket.bind((self.host, self.port))
+        self.socket.listen()
 
         senderDNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         senderDNS.connect((HOST, PORT))
-        senderDNS.send((f"Sender,{self.chave}, {self.host}").encode('utf-8'))
-
+        ip = get_public_ip()
+        senderDNS.send((f"Sender,{self.chave},{ip}").encode('utf-8'))
+        senderDNS.close()
         # Inicia o servidor socket e aguarda a conexão
-        self.socket.bind((self.host, self.port))
 
         while True:
-            self.socket.listen() 
             connection, address = self.socket.accept()
             if connection:
                 diretorio = os.getcwd()

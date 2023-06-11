@@ -4,11 +4,8 @@ import datetime
 import time
 
 class PeerR:
-    def __init__(self, host, port, chave):
-        self.host = "localhost"
+    def __init__(self, port):
         self.port = port
-        self.chave = chave
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection = None
     
     
@@ -26,10 +23,14 @@ class PeerR:
         message = message.split(":")
         message = message[1][1:]
 
+        print(message)
+        reciverDNS.close()
+        time.sleep(2)
+
         # Conecta-se ao par remoto e recebe a lista de informações de arquivos
         sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        sckt.connect(("localhost", self.port))
+        sckt.connect((message, self.port))
         print("Conectado!\n")
 
         file_info_list = sckt.recv(1000).decode('utf-8')

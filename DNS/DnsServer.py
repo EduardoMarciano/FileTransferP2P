@@ -10,7 +10,6 @@ def handle(client, BD, cursor):
     
     while True:
         message = client.recv(1024).decode('utf-8')
-        print(message)
         message = message.split(",")
         print(message)
 
@@ -36,8 +35,10 @@ def handle(client, BD, cursor):
                     BD.commit()
 
                     client.send("Chave cadastrada.".encode('utf-8'))
+                    print("Chave cadastrada.")
 
                 else:
+                    print("Chave já ocupada.")
                     client.send("Chave já ocupada.".encode('utf-8'))
                     quit()
 
@@ -58,6 +59,7 @@ def handle(client, BD, cursor):
                         #Devolve o IP
                         response = f"IP do sender: {sender_ip}"
                         client.send(response.encode('utf-8'))
+                        print(f'Retornando: {sender_ip}')
 
                     except  ConnectionError:
                         print("Sender offline será removido")
