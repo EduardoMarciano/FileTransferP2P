@@ -49,13 +49,13 @@ class Peer:
 
                 # Recebe o nome do arquivo solicitado pelo par remoto e envia o arquivo em blocos
                 namefiles = connection.recv(1024).decode()
-                namefiles = namefiles.split(",")
-
+                namefiles = eval(namefiles)
+                print(namefiles)
                 for namefile in namefiles:
-                    with open(namefile, "rb") as file:
-                        for data in file.readlines():
-                            connection.send(data)
-                        print("Arquivo enviado!")
+                        with open(namefile, "rb") as file:
+                            for data in file.readlines():
+                                connection.send(data)
+                            print(f"Arquivo {namefile} enviado!")
             else:
                 continue
 
@@ -85,20 +85,19 @@ class Peer:
             if file_info['name'] != "sender.py":
                 print(f"Nome: {file_info['name']}\tCriação: {file_info['creation_time']}\tModificação: {file_info['modification_time']}")
 
-        namefile = "" 
+        namefiles = []
         while True:
             entrada = input('Digite o nome do arquivo ou n para sair: ')
             if entrada == "n":
                 break
             else:
-                namefile = namefile+","+entrada
-                 
+                namefiles.append(entrada)
+
         # Envia o nome do arquivo ao par remoto e recebe o arquivo em blocos
-        self.socket.send(namefile.encode())
+        self.socket.send(str(namefiles).encode())
+        print(namefiles)
 
-        lista_nameF = namefile[1:].split(",")
-
-        for x in lista_nameF:
+        for x in namefiles:
             with open(x, "wb") as file:
                 while True:
                     data = self.socket.recv(1000000)
