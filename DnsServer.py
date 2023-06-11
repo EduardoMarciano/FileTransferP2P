@@ -35,10 +35,11 @@ def handle(client, BD, cursor):
                     cursor.fetchall()
                     BD.commit()
 
-                    client.send("Chave cadastrada.".encode('utf-8'))
+                    print("Chave cadastrada.")
+                    quit()
 
                 else:
-                    client.send("Chave já ocupada.".encode('utf-8'))
+                    print("Chave ocupada.")
                     quit()
 
                 
@@ -71,11 +72,11 @@ def handle(client, BD, cursor):
                 
                 except:
                     print("Sender não exite")
-                    client.send("Sender não existe".encode('utf-8'))
                     quit()
 
             else:
                 print("Tipo de pedido não existe")
+                quit()
 
         else:
             print("Recebemos lixo")

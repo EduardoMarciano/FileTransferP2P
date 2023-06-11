@@ -12,14 +12,12 @@ while True:
         client.connect((HOST, PORT))
 
         if escolha == "Sender":
-                client.send("Sender,VAS, 999.999.99.".encode('utf-8'))
+                client.send("Sender,VASC2S, 999.999.99.".encode('utf-8'))
         
         elif escolha == "Reciver":
-                client.send("Reciver,VAS, none".encode('utf-8'))
-
+                client.send("Reciver,VASC2S, none".encode('utf-8'))
+                
+                print(client.recv(1024).decode("utf-8"))
         else:
                 print("Entrada Errada")
                 continue
-
-        message = client.recv(1024).decode('utf-8')
-        print(message)
