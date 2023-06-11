@@ -16,7 +16,7 @@ class Peer:
 
         senderDNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         senderDNS.connect((HOST, PORT))
-        senderDNS.send((f"Sender,{self.chave}, {self.host}").encode('utf-8'))
+        senderDNS.send((f"Sender,{self.chave}, 177.235.144.169").encode('utf-8'))
 
         # Inicia o servidor socket e aguarda a conexão
         self.socket.bind((self.host, self.port))
@@ -51,14 +51,58 @@ class Peer:
                 namefiles = connection.recv(1024).decode()
                 namefiles = eval(namefiles)
                 print(namefiles)
-                
                 for namefile in namefiles:
                         with open(namefile, "rb") as file:
                             for data in file.readlines():
-                                
                                 connection.send(data)
                             print(f"Arquivo {namefile} enviado!")
-
-                connection.close()
             else:
                 continue
+
+    def request(self, chave):
+        # Conecta-se ao servidor DNS e recupera o IP
+        PORT = 5300
+        HOST = '177.235.144.169'
+
+        reciverDNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        reciverDNS.connect((HOST, PORT))
+        
+        reciverDNS.send((f"Reciver,{chave}, none").encode('utf-8'))
+
+        message = reciverDNS.recv(1024).decode('utf-8')
+        message = message.split(":")
+        message = message[1][1:]
+
+        # Conecta-se ao par remoto e recebe a lista de informações de arquivos
+        self.socket.connect((message, self.port))
+        print("Conectado!\n")
+
+        file_info_list = self.socket.recv(1000).decode('utf-8')
+        file_info_list = eval(file_info_list)
+
+        # Exibe os detalhes dos arquivos (exceto o arquivo "sender.py") e solicita o nome do arquivo desejado
+        for file_info in file_info_list:
+            if file_info['name'] != "sender.py":
+                print(f"Nome: {file_info['name']}\tCriação: {file_info['creation_time']}\tModificação: {file_info['modification_time']}")
+
+        namefiles = []
+        while True:
+            entrada = input('Digite o nome do arquivo ou n para sair: ')
+            if entrada == "n":
+                break
+            else:
+                namefiles.append(entrada)
+
+        # Envia o nome do arquivo ao par remoto e recebe o arquivo em blocos
+        self.socket.send(str(namefiles).encode())
+        print(namefiles)
+
+        for x in namefiles:
+            with open(x, "wb") as file:
+                while True:
+                    data = self.socket.recv(1000000)
+                    if not data:
+                        break
+                    file.write(data)
+
+            print(f'{x} recebido!\n')
