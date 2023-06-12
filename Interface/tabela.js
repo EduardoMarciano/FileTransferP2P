@@ -1,8 +1,10 @@
 function defineFiles(evento){
-
   var files = evento.target.files;
   var tabela = document.querySelector('#fileTable tbody');
+  var formSend = document.getElementById("formSend");  
+  formSend.setAttribute("files", files);
 
+ 
   tabela.innerHTML = '';
 
   for (var i = 0; i < files.length; i++) {
@@ -56,27 +58,26 @@ function DefineTamanho(tamanho) {
     return (tamanho / gigabyte).toFixed(2) + ' GB';
   }
 }
-function sendArchives() {
-  var table = document.getElementById("tbody");
-  var lines = table.getElementsByTagName("tr").length;
-  var chaveSender = document.getElementById("chaveS").value;
+// function sendArchives() {
+//   var table = document.getElementById("tbody");
+//   var lines = table.getElementsByTagName("tr").length;
+//   var chaveSender = document.getElementById("chaveS").value;
 
-  if (lines == 0) {
-    alert("Selecione um arquivo para ser enviado.");
-  } else if (chaveSender == '') {
-    alert("A chave identificadora deve ser selecionada.");
-  } else {
-    // enviar arquivos
-  }
+//   if (lines == 0) {
+//     alert("Selecione um arquivo para ser enviado.");
+//   } else if (chaveSender == '') {
+//     alert("A chave identificadora deve ser selecionada.");
+//   } else {
+//     // enviar arquivos
+//   }
     
-}
+// }
 
 function downloadArchives() {
   var table = document.getElementById("tbodyReceiver");
   var lines = table.getElementsByClassName("checkbox");
   var isChecked = [];
 
-  console.log(lines);
 
   for (var i = 0; i < lines.length; i++) {
     isChecked.push(lines[i].checked);

@@ -96,6 +96,14 @@ main {
   width: 45%;
 }
 
+#enviar {
+  font-weight: bold;
+}
+
+#baixar {
+  font-weight: bold;
+}
+
 #receive {
   width: 45%;
 }
@@ -118,6 +126,7 @@ main {
   width: fit-content;
   margin-left: 1%;
   max-height: 0.65cm;
+  font-weight: bold;
 }
 
 #chooseFile {
