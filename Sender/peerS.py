@@ -56,6 +56,7 @@ class PeerS:
                             '%Y-%m-%d %H:%M:%S')
                     }
                     file_info_list.append(file_info)
+                print(file_info_list)
                 # Envia a lista de informações de arquivos para o par remoto
                 connection.send(str(file_info_list).encode())
                 # Recebe o nome do arquivo solicitado pelo par remoto e envia o arquivo em blocos

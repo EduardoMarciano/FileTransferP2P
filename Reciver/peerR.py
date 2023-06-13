@@ -25,7 +25,26 @@ class PeerR:
 
         print(message)
         reciverDNS.close()
-        time.sleep(2)
+
+        # Busca as informações dentro do seu diretório
+        diretorio = os.getcwd()
+        files = os.listdir(diretorio)
+        file_info_reciver = []
+
+        for file_name in files:
+            file_path = os.path.join(diretorio, file_name)
+            file_info = {
+                'name': file_name,
+                'creation_time': datetime.datetime.fromtimestamp(os.path.getctime(file_path)).strftime(
+                '%Y-%m-%d %H:%M:%S'),
+                'modification_time': datetime.datetime.fromtimestamp(os.path.getmtime(file_path)).strftime(
+                '%Y-%m-%d %H:%M:%S')
+            }
+
+            file_info_reciver.append(file_info)
+        
+        print(file_info_reciver)
+
 
         # Conecta-se ao par remoto e recebe a lista de informações de arquivos
         sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -33,35 +52,40 @@ class PeerR:
         sckt.connect((message, self.port))
         print("Conectado!\n")
 
-        file_info_list = sckt.recv(1000).decode('utf-8')
-        file_info_list = eval(file_info_list)
+        file_info_sender = sckt.recv(1000).decode('utf-8')
+        file_info_sender = eval(file_info_sender)
 
-        # Exibe os detalhes dos arquivos (exceto o arquivo "sender.py") e solicita o nome do arquivo desejado
-        for file_info in file_info_list:
-            if file_info['name'] != "sender.py":
-                print(f"Nome: {file_info['name']}\tCriação: {file_info['creation_time']}\tModificação: {file_info['modification_time']}")
+        # Faz a sincronização da pasta
+        choosenFiles = []
+        for file_s in file_info_sender:
+            test = True
 
-        namefiles = []
+            for file_r in file_info_reciver:
 
-        while True:
-            entrada = input('Digite o nome do arquivo ou n para sair: ')
-            if entrada == "n":
-                break
-            else:
-                namefiles.append(entrada)
+                if file_s['name'] == file_r['name']:             
+                    data_s = file_s['modification_time']
+                    data_r = file_r['modification_time']
+                    test = False
+
+                    if data_r<data_s:
+                        print(f"Arquivo antigo substituido {file_r['modification_time']}")
+                        choosenFiles.append(file_s['name'])
+            if test:
+                print("Arquivo não existe")
+        
+        choosenFiles.append('teste.jpeg')
+
 
         # Envia o nome do arquivo ao par remoto e recebe o arquivo em blocos
-        sckt.send(str(namefiles).encode())
-        print(namefiles)
+        sckt.send(str(choosenFiles).encode())
+        print(choosenFiles)
 
-        for x in namefiles:
+        for x in choosenFiles:
             with open(x, "wb") as file:
                 while True:
                     data = sckt.recv(1024)
-                    print(data)
 
                     file.write(data)
                     if not data:
                         print(f"Recebido: {x}")
                         break
-                        

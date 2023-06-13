@@ -1,6 +1,9 @@
 import socket
-import peerS
 import os
+import datetime
+import time
+import threading
+import peerS
 
-sender = peerS.PeerS(5600,"TTT")
+sender = peerS.PeerS(5600,"BBTTT")
 sender.send()
