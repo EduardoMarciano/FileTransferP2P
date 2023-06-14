@@ -7,24 +7,20 @@ import zipfile
 import requests
 import hashlib
 
-
 def get_public_ip():
     response = requests.get('https://api.ipify.org?format=json')
     data = response.json()
     ip = data['ip']
-
+    
     return ip
 
+def calculate_hash(data):
 
-def calculate_hash(filepath):
     hash_object = hashlib.sha1()
-    with open(filepath, 'rb') as file:
-        while True:
-            data = file.read(4096)
-            if not data:
-                break
-            hash_object.update(data)
+    hash_object.update(data)
+    
     return hash_object.hexdigest()
+
 
 class PeerS:
     def __init__(self, port, chave):
@@ -34,8 +30,7 @@ class PeerS:
         self.connection = None
         self.host = socket.gethostbyname(socket.gethostname())
         print(self.host)
-
-
+    
     def send(self):
         PORT = 5300
         HOST = '177.235.144.169'
@@ -58,6 +53,7 @@ class PeerS:
                 files = os.listdir(diretorio)
                 file_info_list = []
                 for file_name in files:
+                    
                     # Obtém informações sobre os arquivos
                     file_path = os.path.join(diretorio, file_name)
                     file_info = {
@@ -65,10 +61,10 @@ class PeerS:
                         'creation_time': datetime.datetime.fromtimestamp(os.path.getctime(file_path)).strftime(
                             '%Y-%m-%d %H:%M:%S'),
                         'modification_time': datetime.datetime.fromtimestamp(os.path.getmtime(file_path)).strftime(
-                            '%Y-%m-%d %H:%M:%S'),
+                            '%Y-%m-%d %H:%M:%S')
                     }
                     file_info_list.append(file_info)
-
+                    
                 print(file_info_list)
                 # Envia a lista de informações de arquivos para o par remoto
                 connection.send(str(file_info_list).encode())
@@ -76,15 +72,16 @@ class PeerS:
                 namefiles = connection.recv(1024).decode()
                 namefiles = eval(namefiles)
                 print(namefiles)
-
-                # Zipa os files seelcionados para o envio
+                
+                #Zipa os files seelcionados para o envio
                 zip_file_name = os.path.join(diretorio, "pasta_selecionada.zip")
 
                 with zipfile.ZipFile(zip_file_name, "w") as zip_file:
-                    # Adiciona cada arquivo à pasta zipada
+                # Adiciona cada arquivo à pasta zipada
                     for namefile in namefiles:
                         file_path = os.path.join(diretorio, namefile)
                         zip_file.write(file_path, os.path.basename(file_path))
+                    
                     sender_hash = calculate_hash(zip_file)
 
                 with open(zip_file_name, "rb") as file:
@@ -96,8 +93,10 @@ class PeerS:
 
                         connection.sendall(data)
 
+                #Envia para o Reciver o hash code da pasta zipada                
                 connection.send(sender_hash.encode('utf-8'))
-
+                
+                #Termina a seção
                 os.remove(zip_file_name)
                 print("Pasta zipada enviada com sucesso.")
 
