@@ -27,8 +27,10 @@ class PeerR:
         print(message)
         reciverDNS.close()
 
+        time.sleep(2)
+
         # Busca as informações dentro do seu diretório
-        diretorio = os.getcwd()
+        diretorio = os.path.join(os.getcwd(), "Arquivos Sincronizados")
         files = os.listdir(diretorio)
         file_info_reciver = []
 
@@ -92,8 +94,19 @@ class PeerR:
 
             if not 'file' in locals():
                 # Cria o arquivo somente quando o primeiro bloco de dados é recebido
-                file = open('arquivo.zip', 'wb')
+                file = open('Arquivos Sincronizados/arquivo.zip', 'wb')
 
             file.write(data)
 
         file.close()
+
+        if os.path.exists("Arquivos Sincronizados/arquivo.zip"):
+            with zipfile.ZipFile("Arquivos Sincronizados/arquivo.zip", "r") as zip_ref:
+            # Extrai todos os arquivos para o diretório atual
+                zip_ref.extractall("Arquivos Sincronizados")
+            
+            print("Arquivos extraídos com sucesso.")
+            os.remove("Arquivos Sincronizados/arquivo.zip")
+
+        else:
+            print("O arquivo zip não existe.")

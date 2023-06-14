@@ -41,7 +41,7 @@ class PeerS:
             self.socket.listen()
             connection, address = self.socket.accept()
             if connection:
-                diretorio = os.getcwd()
+                diretorio = os.path.join(os.getcwd(), "Sincronizar")
                 files = os.listdir(diretorio)
                 file_info_list = []
                 for file_name in files:
@@ -56,6 +56,7 @@ class PeerS:
                             '%Y-%m-%d %H:%M:%S')
                     }
                     file_info_list.append(file_info)
+                    
                 print(file_info_list)
                 # Envia a lista de informações de arquivos para o par remoto
                 connection.send(str(file_info_list).encode())
@@ -65,12 +66,13 @@ class PeerS:
                 print(namefiles)
                 
                 #Zipa os files seelcionados para o envio
-                zip_file_name = "pasta_selecionada.zip"
+                zip_file_name = os.path.join(diretorio, "pasta_selecionada.zip")
 
                 with zipfile.ZipFile(zip_file_name, "w") as zip_file:
                 # Adiciona cada arquivo à pasta zipada
                     for namefile in namefiles:
-                        zip_file.write(namefile)
+                        file_path = os.path.join(diretorio, namefile)
+                        zip_file.write(file_path, os.path.basename(file_path))
 
                 with open(zip_file_name, "rb") as file:
                     while True:
