@@ -3,13 +3,26 @@ import os
 import datetime
 import time
 import zipfile
+import hashlib
+
+
+def calculate_hash(filepath):
+    hash_object = hashlib.sha1()
+    with open(filepath, 'rb') as file:
+        while True:
+            data = file.read(4096)
+            if not data:
+                break
+            hash_object.update(data)
+    return hash_object.hexdigest()
+
 
 class PeerR:
     def __init__(self, port):
         self.port = port
         self.connection = None
-    
-    
+
+
     def request(self, chave):
         # Conecta-se ao servidor DNS e recupera o IP
         PORT = 5300
@@ -17,7 +30,7 @@ class PeerR:
 
         reciverDNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         reciverDNS.connect((HOST, PORT))
-        
+
         reciverDNS.send((f"Reciver,{chave}, none").encode('utf-8'))
 
         message = reciverDNS.recv(1024).decode('utf-8')
@@ -39,15 +52,14 @@ class PeerR:
             file_info = {
                 'name': file_name,
                 'creation_time': datetime.datetime.fromtimestamp(os.path.getctime(file_path)).strftime(
-                '%Y-%m-%d %H:%M:%S'),
+                    '%Y-%m-%d %H:%M:%S'),
                 'modification_time': datetime.datetime.fromtimestamp(os.path.getmtime(file_path)).strftime(
-                '%Y-%m-%d %H:%M:%S')
+                    '%Y-%m-%d %H:%M:%S'),
             }
 
             file_info_reciver.append(file_info)
-        
-        print(file_info_reciver)
 
+        print(file_info_reciver)
 
         # Conecta-se ao par remoto e recebe a lista de informações de arquivos
         sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -64,22 +76,22 @@ class PeerR:
             test = True
 
             for file_r in file_info_reciver:
+                    if file_s['name'] == file_r['name']:
+                        data_s = file_s['modification_time']
+                        data_r = file_r['modification_time']
+                        test = False
 
-                if file_s['name'] == file_r['name']:             
-                    data_s = file_s['modification_time']
-                    data_r = file_r['modification_time']
-                    test = False
+                        if data_r < data_s:
+                            print(f"Arquivo antigo substituido {file_r['modification_time']}")
+                            choosenFiles.append(file_s['name'])
 
-                    if data_r<data_s:
-                        print(f"Arquivo antigo substituido {file_r['modification_time']}")
-                        choosenFiles.append(file_s['name'])
-                    
-                    else:
-                         print(f"Arquivo {file_r['modification_time']} é mais recente no diretório atual")
+                        else:
+                            print(f"Arquivo {file_r['modification_time']} é mais recente no diretório atual")
+                else:
+                    print(f"Arquivo {file_r} corrompido!")
             if test:
                 choosenFiles.append(file_s['name'])
                 print(f"Arquivo {file_s['name']} não existe")
-
 
         # Envia o nome do arquivo ao par remoto e recebe o arquivo em blocos
         sckt.send(str(choosenFiles).encode())
@@ -87,7 +99,7 @@ class PeerR:
 
         while True:
             data = sckt.recv(1024)
-            
+
             if not data:
                 print(f"Recebido")
                 break
@@ -99,14 +111,21 @@ class PeerR:
             file.write(data)
 
         file.close()
+        sender_hash = sckt.recv(1024).decode('utf-8')
+        receiver_hash = calculate_hash(file)
 
-        if os.path.exists("Arquivos Sincronizados/arquivo.zip"):
-            with zipfile.ZipFile("Arquivos Sincronizados/arquivo.zip", "r") as zip_ref:
-            # Extrai todos os arquivos para o diretório atual
-                zip_ref.extractall("Arquivos Sincronizados")
-            
-            print("Arquivos extraídos com sucesso.")
-            os.remove("Arquivos Sincronizados/arquivo.zip")
+        if sender_hash == receiver_hash:
+            if os.path.exists("Arquivos Sincronizados/arquivo.zip"):
+                with zipfile.ZipFile("Arquivos Sincronizados/arquivo.zip", "r") as zip_ref:
+                    # Extrai todos os arquivos para o diretório atual
+                    zip_ref.extractall("Arquivos Sincronizados")
 
+                print("Arquivos extraídos com sucesso.")
+                os.remove("Arquivos Sincronizados/arquivo.zip")
+
+            else:
+                print("O arquivo zip não existe.")
         else:
-            print("O arquivo zip não existe.")
+            os.remove("Arquivos Sincronizados/arquivo.zip")
+            print("Arquivo corrompido!")
+
