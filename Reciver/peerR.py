@@ -2,6 +2,7 @@ import socket
 import os
 import datetime
 import time
+import zipfile
 
 class PeerR:
     def __init__(self, port):
@@ -70,22 +71,29 @@ class PeerR:
                     if data_r<data_s:
                         print(f"Arquivo antigo substituido {file_r['modification_time']}")
                         choosenFiles.append(file_s['name'])
+                    
+                    else:
+                         print(f"Arquivo {file_r['modification_time']} é mais recente no diretório atual")
             if test:
-                print("Arquivo não existe")
-        
-        choosenFiles.append('teste.jpeg')
+                choosenFiles.append(file_s['name'])
+                print(f"Arquivo {file_s['name']} não existe")
 
 
         # Envia o nome do arquivo ao par remoto e recebe o arquivo em blocos
         sckt.send(str(choosenFiles).encode())
         print(choosenFiles)
 
-        for x in choosenFiles:
-            with open(x, "wb") as file:
-                while True:
-                    data = sckt.recv(1024)
+        while True:
+            data = sckt.recv(1024)
+            
+            if not data:
+                print(f"Recebido")
+                break
 
-                    file.write(data)
-                    if not data:
-                        print(f"Recebido: {x}")
-                        break
+            if not 'file' in locals():
+                # Cria o arquivo somente quando o primeiro bloco de dados é recebido
+                file = open('arquivo.zip', 'wb')
+
+            file.write(data)
+
+        file.close()

@@ -3,7 +3,7 @@ import os
 import datetime
 import time
 import threading
-
+import zipfile
 import requests
 
 def get_public_ip():
@@ -64,17 +64,27 @@ class PeerS:
                 namefiles = eval(namefiles)
                 print(namefiles)
                 
-                for namefile in namefiles:
-                    with open(namefile, "rb") as file:
-                        while True:
-                            data = file.read(1024)
-                            
-                            if not data:
-                                break
+                #Zipa os files seelcionados para o envio
+                zip_file_name = "pasta_selecionada.zip"
 
-                            connection.sendall(data)
+                with zipfile.ZipFile(zip_file_name, "w") as zip_file:
+                # Adiciona cada arquivo à pasta zipada
+                    for namefile in namefiles:
+                        zip_file.write(namefile)
 
-                    print(f"Enviado: {namefile}")
+                with open(zip_file_name, "rb") as file:
+                    while True:
+                        data = file.read(1024)
+
+                        if not data:
+                            break
+
+                        connection.sendall(data)
+
+                os.remove(zip_file_name)
+                print("Pasta zipada enviada com sucesso.")
+
+                
                 connection.close()
             else:
                 continue
