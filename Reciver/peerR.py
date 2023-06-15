@@ -5,12 +5,10 @@ import time
 import zipfile
 import hashlib
 
-
 def calculate_hash(data):
-
     hash_object = hashlib.sha1()
     hash_object.update(data)
-
+    
     return hash_object.hexdigest()
 
 class PeerR:
@@ -94,6 +92,8 @@ class PeerR:
         sckt.send(str(choosenFiles).encode())
         print(choosenFiles)
 
+        sender_hash = sckt.recv(1024).decode()
+
         while True:
             data = sckt.recv(1024)
             
@@ -107,22 +107,25 @@ class PeerR:
 
             file.write(data)
 
-        sender_hash = sckt.recv(1024).decode('utf-8')
-        receiver_hash = calculate_hash(file)
         file.close()
 
-        if sender_hash != receiver_hash:
-            print("Arquivo zipado corrompido.")
-        
-        else:
+        if os.path.exists("Arquivos Sincronizados/arquivo.zip"):
+            with zipfile.ZipFile("Arquivos Sincronizados/arquivo.zip", "r") as zip_ref:
+                
+                zip_file_name = os.path.join(diretorio, "arquivo.zip")
+                with open(zip_file_name, "rb") as file:
+                    zip_data = file.read()
+                    reciver_hash = calculate_hash(zip_data)
 
-            if os.path.exists("Arquivos Sincronizados/arquivo.zip"):
-                with zipfile.ZipFile("Arquivos Sincronizados/arquivo.zip", "r") as zip_ref:
+                if reciver_hash == sender_hash:
                 # Extrai todos os arquivos para o diretório atual
                     zip_ref.extractall("Arquivos Sincronizados")
-                
-                print("Arquivos extraídos com sucesso.")
+                    print("Arquivos extraídos com sucesso.")
+
+                else:
+                    print("arquivo Conrrompido.")
+
                 os.remove("Arquivos Sincronizados/arquivo.zip")
 
-            else:
-                print("O arquivo zip não existe.")
+        else:
+            print("O arquivo zip não existe.")

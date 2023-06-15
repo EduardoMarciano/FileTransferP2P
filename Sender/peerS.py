@@ -7,19 +7,18 @@ import zipfile
 import requests
 import hashlib
 
+def calculate_hash(data):
+    hash_object = hashlib.sha1()
+    hash_object.update(data)
+    
+    return hash_object.hexdigest()
+
 def get_public_ip():
     response = requests.get('https://api.ipify.org?format=json')
     data = response.json()
     ip = data['ip']
     
     return ip
-
-def calculate_hash(data):
-
-    hash_object = hashlib.sha1()
-    hash_object.update(data)
-    
-    return hash_object.hexdigest()
 
 
 class PeerS:
@@ -35,7 +34,7 @@ class PeerS:
         PORT = 5300
         HOST = '177.235.144.169'
         # Inicia o servidor socket e aguarda a conexão
-        ip = get_public_ip()
+        ip = '177.235.144.169'
 
         senderDNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         senderDNS.connect((HOST, PORT))
@@ -81,8 +80,11 @@ class PeerS:
                     for namefile in namefiles:
                         file_path = os.path.join(diretorio, namefile)
                         zip_file.write(file_path, os.path.basename(file_path))
-                    
-                    sender_hash = calculate_hash(zip_file)
+
+                with open(zip_file_name, "rb") as file:  
+                    zip_data = file.read()
+                    sender_hash = calculate_hash(zip_data)
+                    connection.send(sender_hash.encode())
 
                 with open(zip_file_name, "rb") as file:
                     while True:
@@ -93,13 +95,10 @@ class PeerS:
 
                         connection.sendall(data)
 
-                #Envia para o Reciver o hash code da pasta zipada                
-                connection.send(sender_hash.encode('utf-8'))
-                
-                #Termina a seção
                 os.remove(zip_file_name)
                 print("Pasta zipada enviada com sucesso.")
 
+                
                 connection.close()
             else:
                 continue

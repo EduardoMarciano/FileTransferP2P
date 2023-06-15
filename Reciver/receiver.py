@@ -5,4 +5,4 @@ import time
 import peerR
 
 receiver = peerR.PeerR(5600)
-receiver.request("BRTT")
+receiver.request("RTT")
