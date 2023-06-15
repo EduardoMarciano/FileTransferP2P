@@ -48,7 +48,8 @@ class PeerS:
             self.socket.listen()
             connection, address = self.socket.accept()
             if connection:
-                diretorio = os.path.join(os.getcwd(), "Sincronizar")
+                diretorio = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),"FileTransferP2P", "Sincronizar", "EnviarArquivos")
+                print(diretorio)
                 files = os.listdir(diretorio)
                 file_info_list = []
                 for file_name in files:

@@ -34,10 +34,10 @@ class PeerR:
         print(message)
         reciverDNS.close()
 
-        time.sleep(2)
-
         # Busca as informações dentro do seu diretório
-        diretorio = os.path.join(os.getcwd(), "Arquivos Sincronizados")
+        diretorio = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),"FileTransferP2P", "Sincronizar", "ReceberArquivos")
+        print(diretorio)
+
         files = os.listdir(diretorio)
         file_info_reciver = []
 
@@ -82,7 +82,7 @@ class PeerR:
                         choosenFiles.append(file_s['name'])
                     
                     else:
-                         print(f"Arquivo {file_r['modification_time']} é mais recente no diretório atual")
+                         print(f"Arquivo {file_r['name']} é mais recente no diretório atual.")
             if test:
                 choosenFiles.append(file_s['name'])
                 print(f"Arquivo {file_s['name']} não existe")
@@ -93,6 +93,7 @@ class PeerR:
         print(choosenFiles)
 
         sender_hash = sckt.recv(1024).decode()
+        zip_file_name = os.path.join(diretorio, "arquivo.zip")
 
         while True:
             data = sckt.recv(1024)
@@ -103,29 +104,27 @@ class PeerR:
 
             if not 'file' in locals():
                 # Cria o arquivo somente quando o primeiro bloco de dados é recebido
-                file = open('Arquivos Sincronizados/arquivo.zip', 'wb')
+                file = open(zip_file_name, 'wb')
 
             file.write(data)
 
         file.close()
 
-        if os.path.exists("Arquivos Sincronizados/arquivo.zip"):
-            with zipfile.ZipFile("Arquivos Sincronizados/arquivo.zip", "r") as zip_ref:
-                
-                zip_file_name = os.path.join(diretorio, "arquivo.zip")
+
+
+        if os.path.exists(zip_file_name):
+            with zipfile.ZipFile(zip_file_name, "r") as zip_ref:
+            
                 with open(zip_file_name, "rb") as file:
                     zip_data = file.read()
                     reciver_hash = calculate_hash(zip_data)
 
                 if reciver_hash == sender_hash:
-                # Extrai todos os arquivos para o diretório atual
-                    zip_ref.extractall("Arquivos Sincronizados")
+                # Extrai todos os arquivos para o diretório
+                    zip_ref.extractall(diretorio)
                     print("Arquivos extraídos com sucesso.")
-
                 else:
                     print("arquivo Conrrompido.")
-
-                os.remove("Arquivos Sincronizados/arquivo.zip")
-
+                os.remove(zip_file_name)
         else:
             print("O arquivo zip não existe.")

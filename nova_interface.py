@@ -1,7 +1,24 @@
 from tkinter import *
 from tkinter import messagebox
-from peerR import PeerR
-from peerS import PeerS
+from Sender.peerS import PeerS
+from Reciver.peerR import PeerR
+
+
+def enviaArquivo(chaveSender):
+
+        peerS = PeerS(5600, chaveSender)
+        peerS.send()
+
+        messagebox.showwarning(title="ERROR", message="Tente novamente.")
+
+    
+def recebeArquivo(chaveReceiver):
+    try:
+        peerR = PeerR(5600)
+        peerR.request(chaveReceiver)
+    except:
+        messagebox.showwarning(title="ERROR", message="Tente novamente.")
+
 
 class Application:
     def __init__(self, master=None):
@@ -64,15 +81,13 @@ class Application:
         self.buttonSincronizarReceiver["command"] = self.sincronizarReceiver
         self.buttonSincronizarReceiver.pack(side=BOTTOM)
 
-
     def sincronizarPasta(self):
         chaveSender = self.chaveSenderEntrada.get()
 
         if (chaveSender == ''):
             messagebox.showwarning(title="Alerta!", message="Insira sua chave identificadora.")
         else:
-            peerS = PeerS(port=5600, chave=chaveSender)
-            peerS.send()
+            enviaArquivo(chaveSender)
 
     def sincronizarReceiver(self):
         chaveReceiver = self.chaveReceiverEntrada.get()
@@ -80,9 +95,8 @@ class Application:
         if (chaveReceiver == ''):
             messagebox.showwarning(title="Alerta!", message="Insira a chave identificadora do Sender.")
         else:
-            peerR = PeerR(5600)
-            peerR.request(chaveReceiver)
-    
+            recebeArquivo(chaveReceiver)
+
 root = Tk()
 Application(root)
 root.mainloop()
