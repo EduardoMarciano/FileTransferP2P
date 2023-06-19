@@ -13,10 +13,10 @@ def enviaArquivo(chaveSender):
 
     
 def recebeArquivo(chaveReceiver):
-
+    try:
         peerR = PeerR(5600)
         peerR.request(chaveReceiver)
-
+    except:
         messagebox.showwarning(title="ERROR", message="Tente novamente.")
 
 
