@@ -5,5 +5,5 @@ import time
 import threading
 import peerS
 
-sender = peerS.PeerS(5600,"RRR")
+sender = peerS.PeerS(5600,"ILDA")
 sender.send()

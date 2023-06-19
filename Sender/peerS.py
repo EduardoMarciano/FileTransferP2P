@@ -34,7 +34,7 @@ class PeerS:
         PORT = 5300
         HOST = '177.235.144.169'
         # Inicia o servidor socket e aguarda a conexão
-        ip = '177.235.144.169'
+        ip = get_public_ip()
 
         senderDNS = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         senderDNS.connect((HOST, PORT))
